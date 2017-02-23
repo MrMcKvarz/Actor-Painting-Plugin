@@ -1,5 +1,7 @@
 # Visual Studio 2015 user specific files
 .vs/
+*.db
+*.opendb
 
 # Compiled Object files
 *.slo
@@ -60,3 +62,11 @@ Intermediate/*
 
 # Cache files for the editor to use
 DerivedDataCache/*
+
+Content/*
+Source/*
+*.ini
+*.uproject
+
+Plugins/ActorPainting/Binaries/*
+Plugins/ActorPainting/Intermediate/*

@@ -1,0 +1,23 @@
+{
+	"FileVersion": 3,
+	"Version": 1,
+	"VersionName": "1.0",
+	"FriendlyName": "ActorPainting",
+	"Description": "Plugin for painting on actors",
+	"Category": "Painting",
+	"CreatedBy": "Yaroslav Poleshcuk",
+	"CreatedByURL": "",
+	"DocsURL": "",
+	"MarketplaceURL": "",
+	"SupportURL": "",
+	"CanContainContent": false,
+	"IsBetaVersion": true,
+	"Installed": false,
+	"Modules": [
+		{
+			"Name": "ActorPainting",
+			"Type": "Developer",
+			"LoadingPhase": "Default"
+		}
+	]
+}
