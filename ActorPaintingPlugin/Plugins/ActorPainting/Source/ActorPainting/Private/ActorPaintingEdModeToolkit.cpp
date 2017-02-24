@@ -3,6 +3,7 @@
 #include "ActorPaintingPrivatePCH.h"
 #include "ActorPaintingEdMode.h"
 #include "ActorPaintingEdModeToolkit.h"
+#include "SNumericEntryBox.h"
 
 #define LOCTEXT_NAMESPACE "FActorPaintingEdModeToolkit"
 
@@ -13,6 +14,11 @@ FActorPaintingEdModeToolkit::FActorPaintingEdModeToolkit()
 void FActorPaintingEdModeToolkit::Init(const TSharedPtr<IToolkitHost>& InitToolkitHost)
 {
 	FMargin StandardPadding(0.0f, 4.0f, 0.0f, 4.0f);
+
+	float MinBrushSliderRadius = 1, MaxBrushSliderRadius = 256;
+
+	float MinBrushRadius = 1, MaxBrushRadius = 256;
+
 	struct Locals
 	{
 
@@ -59,6 +65,15 @@ void FActorPaintingEdModeToolkit::Init(const TSharedPtr<IToolkitHost>& InitToolk
 			.FillHeight(1.f)
 			[
 				SNew(SVerticalBox)
+				+ SVerticalBox::Slot()
+				.AutoHeight()
+				.Padding(0.0f, 8.0f, 0.0f, 8.0f)
+				.HAlign(HAlign_Left)
+				[
+					SNew(STextBlock)
+					.AutoWrapText(true)
+					.Text(LOCTEXT("PaintActorsLabel", "Paint Actors"))
+				]
 				+ SVerticalBox::Slot()
 				.AutoHeight()
 				.Padding(StandardPadding)
@@ -237,6 +252,80 @@ void FActorPaintingEdModeToolkit::Init(const TSharedPtr<IToolkitHost>& InitToolk
 							]
 						]
 					]
+				]
+				+ SVerticalBox::Slot()
+				.AutoHeight()
+				.Padding(StandardPadding)
+				.HAlign(HAlign_Fill)
+					[
+						SNew(SHorizontalBox)
+						+ SHorizontalBox::Slot()
+						.Padding(StandardPadding)
+						.HAlign(HAlign_Left)
+						[
+							SNew(SVerticalBox)
+							+ SVerticalBox::Slot()
+							.AutoHeight()
+							.Padding(StandardPadding)
+							[
+							SNew(STextBlock)
+							.AutoWrapText(true)
+							.Text(LOCTEXT("ChannelsLabel", "Channels"))
+							]
+						]
+						+ SHorizontalBox::Slot()
+						.Padding(StandardPadding)
+						.HAlign(HAlign_Right)
+						[
+							SNew(SVerticalBox) // TODO Fix alignment
+							+ SVerticalBox::Slot()
+							.AutoHeight()
+							.Padding(StandardPadding)
+							[
+							SNew(SHorizontalBox)
+							+ SHorizontalBox::Slot()
+							.AutoWidth()
+							.Padding(2.0f, 0.0f)
+							[
+								SNew(SCheckBox)
+								[
+									SNew(STextBlock)
+									.Text(LOCTEXT("RedChannelLabel", "Red"))
+								]
+							]
+							+ SHorizontalBox::Slot()
+							.AutoWidth()
+							.Padding(2.0f, 0.0f)
+							[
+								SNew(SCheckBox)
+								[
+									SNew(STextBlock)
+									.Text(LOCTEXT("GreenChannelLabel", "Green"))
+								]
+							]
+							+ SHorizontalBox::Slot()
+							.AutoWidth()
+							.Padding(2.0f, 0.0f)
+							[
+								SNew(SCheckBox)
+								[
+									SNew(STextBlock)
+									.Text(LOCTEXT("BlueChannelLabel", "Blue"))
+								]
+							]
+							+ SHorizontalBox::Slot()
+							.AutoWidth()
+							.Padding(2.0f, 0.0f)
+							[
+								SNew(SCheckBox)
+								[
+									SNew(STextBlock)
+									.Text(LOCTEXT("AplhaChannelLabel", "Alpha"))
+								]
+							]
+						]
+					]
+				]
 					#pragma endregion
 				]
 				+ SVerticalBox::Slot()
@@ -246,9 +335,188 @@ void FActorPaintingEdModeToolkit::Init(const TSharedPtr<IToolkitHost>& InitToolk
 					SNew(SSeparator)
 					.Orientation(Orient_Horizontal)
 				]
+				+ SVerticalBox::Slot()
+				.AutoHeight()
+				.Padding(StandardPadding)
+				[
+					#pragma region PaintToolSettings
+					SNew(SVerticalBox)
+					+ SVerticalBox::Slot()
+					.AutoHeight()
+					[
+						SNew(SHorizontalBox)
+						+ SHorizontalBox::Slot()
+						.Padding(StandardPadding)
+						.HAlign(HAlign_Left)
+						[
+							SNew(STextBlock)
+							.AutoWrapText(true)
+							.Text(LOCTEXT("RadiusLabel","Radius"))
+						]
+						+ SHorizontalBox::Slot()
+						.FillWidth(2.0f)
+						.Padding(StandardPadding)	
+						.HAlign(HAlign_Fill)
+						.VAlign(VAlign_Center)
+						[
+							SNew(SNumericEntryBox<float>)
+							.AllowSpin(true)
+							.MinSliderValue(MinBrushSliderRadius)
+							.MaxSliderValue(MaxBrushSliderRadius)
+							.MinValue(MinBrushRadius)
+							.MaxValue(MaxBrushRadius)
+							.Value(0)
+						]
+					]
+					+ SVerticalBox::Slot()
+					.AutoHeight()
+					[
+						SNew(SHorizontalBox)
+						+ SHorizontalBox::Slot()
+						.Padding(StandardPadding)
+						.HAlign(HAlign_Left)
+						[
+							SNew(STextBlock)
+							.AutoWrapText(true)
+							.Text(LOCTEXT("StrengthLabel", "Strength"))
+						]
+						+ SHorizontalBox::Slot()
+						.FillWidth(2.0f)
+						.Padding(StandardPadding)
+						.HAlign(HAlign_Fill)
+						.VAlign(VAlign_Center)
+						[
+							SNew(SNumericEntryBox<float>) //TODO Loose magic numbers
+							.AllowSpin(true)
+							.MinSliderValue(0.f)
+							.MaxSliderValue(1.f)
+							.MinValue(0.f)
+							.MaxValue(1.f)
+							.Value(0.f)
+						]
+					]
+					+ SVerticalBox::Slot()
+					.AutoHeight()
+					[
+						SNew(SHorizontalBox)
+						+ SHorizontalBox::Slot()
+						.Padding(StandardPadding)
+						.HAlign(HAlign_Left)
+						[
+							SNew(STextBlock)
+							.AutoWrapText(true)
+							.Text(LOCTEXT("FalloffLabel", "Falloff"))
+						]
+						+ SHorizontalBox::Slot()
+						.FillWidth(2.0f)
+						.Padding(StandardPadding)
+						.HAlign(HAlign_Fill)
+						.VAlign(VAlign_Center)
+						[
+							SNew(SNumericEntryBox<float>) 
+							.AllowSpin(true)
+							.MinSliderValue(0.f)
+							.MaxSliderValue(1.f)
+							.MinValue(0.f)
+							.MaxValue(1.f)
+							.Value(0.f)
+						]
+					]
+					+ SVerticalBox::Slot()
+					.AutoHeight()
+					[
+						SNew(SHorizontalBox)
+						+ SHorizontalBox::Slot()
+						.Padding(StandardPadding)
+						.HAlign(HAlign_Left)
+						[
+							SNew(STextBlock)
+							.AutoWrapText(true)
+						.Text(LOCTEXT("BrushFlowLabel", "Enable brush flow"))
+						]
+						+ SHorizontalBox::Slot()
+						.FillWidth(1.0f)
+						.HAlign(HAlign_Right)
+						.VAlign(VAlign_Center)
+						[
+							SNew(SCheckBox)
+						]
+					]
+					+ SVerticalBox::Slot()
+					.AutoHeight()
+					[
+						SNew(SHorizontalBox)
+						+ SHorizontalBox::Slot()
+						.Padding(StandardPadding)
+						.HAlign(HAlign_Left)
+						[
+							SNew(STextBlock)
+							.AutoWrapText(true)
+							.Text(LOCTEXT("FlowLabel", "Flow"))
+						]
+						+ SHorizontalBox::Slot()
+						.FillWidth(2.0f)
+						.Padding(StandardPadding)
+						.HAlign(HAlign_Fill)
+						.VAlign(VAlign_Center)
+						[
+							SNew(SNumericEntryBox<float>)
+							.AllowSpin(true)
+							.MinSliderValue(0.f)
+							.MaxSliderValue(1.f)
+							.MinValue(0.f)
+							.MaxValue(1.f)
+							.Value(0.f)
+						]
+					]
+					+ SVerticalBox::Slot()
+					.AutoHeight()
+					[
+						SNew(SHorizontalBox)
+						+ SHorizontalBox::Slot()
+						.Padding(StandardPadding)
+						.HAlign(HAlign_Left)
+						[
+							SNew(STextBlock)
+							.AutoWrapText(true)
+						.Text(LOCTEXT("IngoreBlackFacingLabel", "Ignore black-facing"))
+						]
+						+ SHorizontalBox::Slot()
+						.FillWidth(1.0f)
+						.HAlign(HAlign_Right)
+						.VAlign(VAlign_Center)
+						[
+							SNew(SCheckBox)
+						]
+					]
+					#pragma endregion
+				]
+				+ SVerticalBox::Slot()
+				.AutoHeight()
+				.Padding(StandardPadding)
+				[
+					#pragma region ViewPanel
+					SNew(SHorizontalBox)
+					+ SHorizontalBox::Slot()
+					.Padding(2.0f, 0.0f)
+					.FillWidth(1)
+					.HAlign(HAlign_Left)
+					[
+						SNew(STextBlock)
+						.Text(LOCTEXT("ViewLabel", "View"))
+					]
+					+ SHorizontalBox::Slot()
+					.AutoWidth()
+					.Padding(0.0f, 0.0f, 2.0f, 0.0f)
+					.HAlign(HAlign_Right)
+					[
+						SNew(STextBlock)
+						.Text(LOCTEXT("MeshPaint_VertexColorViewLabel", "Off  RGB  R  G  B  A"))
+					]
+					#pragma endregion
+				]				
 			]
-		]
-	];
+		];
 		
 	FModeToolkit::Init(InitToolkitHost);
 }
