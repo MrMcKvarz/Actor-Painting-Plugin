@@ -12,12 +12,9 @@ FActorPaintingEdModeToolkit::FActorPaintingEdModeToolkit()
 
 void FActorPaintingEdModeToolkit::Init(const TSharedPtr<IToolkitHost>& InitToolkitHost)
 {
+	FMargin StandardPadding(0.0f, 4.0f, 0.0f, 4.0f);
 	struct Locals
 	{
-		static bool IsWidgetEnabled()
-		{
-			return GEditor->GetSelectedActors()->Num() != 0;
-		}
 
 		static FReply OnButtonClick(FVector InOffset)
 		{
@@ -54,54 +51,97 @@ void FActorPaintingEdModeToolkit::Init(const TSharedPtr<IToolkitHost>& InitToolk
 
 	const float Factor = 256.0f;
 
+	ChildSlot
+	[
 	SAssignNew(ToolkitWidget, SBorder)
 		.HAlign(HAlign_Left)
 		.Padding(25)
-		.IsEnabled_Static(&Locals::IsWidgetEnabled)
 		[
 			SNew(SVerticalBox)
 			+ SVerticalBox::Slot()
-			.HAlign(HAlign_Left)
-			.AutoHeight()
+			.Padding(6.0f, 0.0f)
 			[
-				SNew(SHorizontalBox)
-				+ SHorizontalBox::Slot()
-			.AutoWidth()
-			[
-				SNew(STextBlock)
-				.AutoWrapText(true)
-			.Text(LOCTEXT("VertexColorsLabel", "Instance vertex colors"))
-			]
-			]
-			+ SVerticalBox::Slot()
-				.HAlign(HAlign_Left)
+				SNew(SVerticalBox)
+				+ SVerticalBox::Slot()
 				.AutoHeight()
+				.Padding(StandardPadding)
 				[
-					SNew(SHorizontalBox)
-					+ SHorizontalBox::Slot()
-					.AutoWidth()
-						[
-							Locals::MakeButton(LOCTEXT("CopyButtonLabel", "Copy"), FVector(0, 0, Factor))
-
-						]
-					+ SHorizontalBox::Slot()
+					SNew(SVerticalBox)
+					+ SVerticalBox::Slot()
+					.HAlign(HAlign_Left)
+					.AutoHeight()
+					.Padding(StandardPadding)
+					[
+						SNew(SHorizontalBox)
+						+ SHorizontalBox::Slot()
+						.Padding(2.0f, 0.0f)
 						.AutoWidth()
+						.HAlign(HAlign_Left)
 						[
-							Locals::MakeButton(LOCTEXT("PasteButtonLabel", "Paste"), FVector(0, -Factor, 0))
+							SNew(STextBlock)
+							.AutoWrapText(true)
+							.Text(LOCTEXT("VertexColorsLabel", "Instance vertex colors"))
 						]
-					+ SHorizontalBox::Slot()
+						+ SHorizontalBox::Slot()
 						.AutoWidth()
+						.Padding(2.0f, 0.0f)
+						.HAlign(HAlign_Right)
+							[
+								SNew(STextBlock)
+								.AutoWrapText(true)
+								.Text(LOCTEXT("IDKWhatLabel", "None")) //TODO Check what this label actually do
+							]
+					]
+					+ SVerticalBox::Slot()
+						.HAlign(HAlign_Left)
+						.AutoHeight()
+						.Padding(StandardPadding)
 						[
-							Locals::MakeButton(LOCTEXT("RemoveButtonLabel", "Remove"), FVector(0, Factor, 0))
+							SNew(SHorizontalBox)
+							+ SHorizontalBox::Slot()
+							.AutoWidth()
+							//.FillWidth(1)
+								[
+									SNew(SWrapBox)
+									.UseAllottedWidth(true)
+									+ SWrapBox::Slot()
+									.Padding(2.0f, 0.0f)
+									[
+										SNew(SButton)
+										.Text(LOCTEXT("CopyButtonLabel", "Copy"))
+										.HAlign(HAlign_Right)
+										.VAlign(VAlign_Center)
+									]
+									+ SWrapBox::Slot()
+									.Padding(2.0f, 0.0f)
+									[
+										SNew(SButton)
+										.Text(LOCTEXT("PasteButtonLabel", "Paste"))
+										.HAlign(HAlign_Right)
+										.VAlign(VAlign_Center)
+									]
+									+ SWrapBox::Slot()
+									.Padding(2.0f, 0.0f)
+									[
+										SNew(SButton)
+										.Text(LOCTEXT("RemoveButtonLabel", "Remove"))
+										.HAlign(HAlign_Right)
+										.VAlign(VAlign_Center)
+									]
+									+ SWrapBox::Slot()
+									.Padding(2.0f, 0.0f)
+									[
+										SNew(SButton)
+										.Text(LOCTEXT("FixButtonLabel", "Fix"))
+										.HAlign(HAlign_Right)
+										.VAlign(VAlign_Center)
+									]
+								]
 						]
-					+ SHorizontalBox::Slot()
-						.AutoWidth()
-						[
-							Locals::MakeButton(LOCTEXT("FixButtonLabel", "Fix"), FVector(0, 0, -Factor))
-						]
-				]
-
-		];
+					]
+			]
+		]
+	];
 		
 	FModeToolkit::Init(InitToolkitHost);
 }

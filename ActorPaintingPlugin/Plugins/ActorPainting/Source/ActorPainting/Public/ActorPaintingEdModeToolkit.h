@@ -23,4 +23,5 @@ public:
 private:
 
 	TSharedPtr<SWidget> ToolkitWidget;
+	FSimpleSlot ChildSlot;
 };
