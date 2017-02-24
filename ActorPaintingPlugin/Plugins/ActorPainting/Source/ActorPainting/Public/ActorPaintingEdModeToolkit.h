@@ -24,4 +24,8 @@ private:
 
 	TSharedPtr<SWidget> ToolkitWidget;
 	FSimpleSlot ChildSlot;
+
+	FReply PaintColorBlock_OnMouseButtonDown(const FGeometry& MyGeometry, const FPointerEvent& MouseEvent);
+
 };
+

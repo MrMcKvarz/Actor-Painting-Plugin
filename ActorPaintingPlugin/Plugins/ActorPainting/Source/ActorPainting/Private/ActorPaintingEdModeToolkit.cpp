@@ -4,6 +4,12 @@
 #include "ActorPaintingEdMode.h"
 #include "ActorPaintingEdModeToolkit.h"
 #include "SNumericEntryBox.h"
+#include "PackageTools.h"
+#include "ISourceControlModule.h"
+#include "SColorPicker.h"
+#include "Engine/StaticMeshActor.h"
+#include "Engine/Selection.h"
+#include "Engine/StaticMesh.h"
 
 #define LOCTEXT_NAMESPACE "FActorPaintingEdModeToolkit"
 
@@ -249,6 +255,8 @@ void FActorPaintingEdModeToolkit::Init(const TSharedPtr<IToolkitHost>& InitToolk
 							.Padding(StandardPadding)
 							[
 								SNew(SColorBlock)
+								.ShowBackgroundForAlpha(true)
+								.OnMouseButtonDown(this, &FActorPaintingEdModeToolkit::PaintColorBlock_OnMouseButtonDown)
 							]
 						]
 					]
@@ -535,5 +543,37 @@ class FEdMode* FActorPaintingEdModeToolkit::GetEditorMode() const
 {
 	return GLevelEditorModeTools().GetActiveMode(FActorPaintingEdMode::EM_ActorPaintingEdModeId);
 }
+
+FReply FActorPaintingEdModeToolkit::PaintColorBlock_OnMouseButtonDown(const FGeometry & MyGeometry, const FPointerEvent & MouseEvent)
+{
+	if (MouseEvent.GetEffectingButton() != EKeys::LeftMouseButton)
+	{
+		return FReply::Unhandled();
+	}
+	/*		Color picker window use
+		FColorPickerArgs PickerArgs;
+		PickerArgs.bOnlyRefreshOnMouseUp = true;
+		PickerArgs.ParentWidget = AsShared();
+		PickerArgs.bUseAlpha = bUseAlpha;
+		PickerArgs.bOnlyRefreshOnOk = bOnlyRefreshOnOk;
+		PickerArgs.DisplayGamma = TAttribute<float>::Create( TAttribute<float>::FGetter::CreateUObject(GEngine, &UEngine::GetDisplayGamma) );
+		PickerArgs.OnColorCommitted = FOnLinearColorValueChanged::CreateSP( this, &SPropertyEditorColor::SetColor);
+		PickerArgs.OnColorPickerCancelled = FOnColorPickerCancelled::CreateSP( this, &SPropertyEditorColor::OnColorPickerCancelled );
+		PickerArgs.InitialColorOverride = InitialColor;
+
+		OpenColorPicker(PickerArgs);*/
+	FColorPickerArgs PickerArgs;
+	PickerArgs.bUseAlpha = true;
+	PickerArgs.DisplayGamma = TAttribute<float>::Create(TAttribute<float>::FGetter::CreateUObject(GEngine, &UEngine::GetDisplayGamma));
+	//PickerArgs.OnColorCommitted = InOnColorCommitted;
+	//PickerArgs.InitialColorOverride = InInitialColor;
+	PickerArgs.bOnlyRefreshOnOk = true;
+
+	OpenColorPicker(PickerArgs);
+
+	return FReply::Handled();
+}
+
+
 
 #undef LOCTEXT_NAMESPACE
