@@ -53,25 +53,31 @@ void FActorPaintingEdModeToolkit::Init(const TSharedPtr<IToolkitHost>& InitToolk
 
 	ChildSlot
 	[
-	SAssignNew(ToolkitWidget, SBorder)
-		.HAlign(HAlign_Left)
-		.Padding(25)
-		[
-			SNew(SVerticalBox)
+			SAssignNew(ToolkitWidget, SVerticalBox)
 			+ SVerticalBox::Slot()
 			.Padding(6.0f, 0.0f)
+			.FillHeight(1.f)
 			[
 				SNew(SVerticalBox)
 				+ SVerticalBox::Slot()
 				.AutoHeight()
 				.Padding(StandardPadding)
 				[
+					SNew(SSeparator)
+					.Orientation(Orient_Horizontal)
+				]
+				+ SVerticalBox::Slot() // Vertex instances panel slot
+				.AutoHeight()
+				.Padding(StandardPadding)
+				[
+					#pragma region VertexInstancesPanel
 					SNew(SVerticalBox)
 					+ SVerticalBox::Slot()
-					.HAlign(HAlign_Left)
+					.HAlign(HAlign_Fill)
 					.AutoHeight()
 					.Padding(StandardPadding)
 					[
+						#pragma region HorizontalBoxForInstanceVertexLabels
 						SNew(SHorizontalBox)
 						+ SHorizontalBox::Slot()
 						.Padding(2.0f, 0.0f)
@@ -83,24 +89,24 @@ void FActorPaintingEdModeToolkit::Init(const TSharedPtr<IToolkitHost>& InitToolk
 							.Text(LOCTEXT("VertexColorsLabel", "Instance vertex colors"))
 						]
 						+ SHorizontalBox::Slot()
-						.AutoWidth()
 						.Padding(2.0f, 0.0f)
 						.HAlign(HAlign_Right)
-							[
-								SNew(STextBlock)
-								.AutoWrapText(true)
-								.Text(LOCTEXT("IDKWhatLabel", "None")) //TODO Check what this label actually do
-							]
+						[
+							SNew(STextBlock)
+							.AutoWrapText(true)
+							.Text(LOCTEXT("IDKWhatLabel", "None")) //TODO Check what this label actually do
+						]
+						#pragma endregion
 					]
 					+ SVerticalBox::Slot()
-						.HAlign(HAlign_Left)
-						.AutoHeight()
-						.Padding(StandardPadding)
-						[
+					.HAlign(HAlign_Fill)
+					.AutoHeight()
+					.Padding(StandardPadding)
+					[
+						#pragma region HorizontalBoxForButton
 							SNew(SHorizontalBox)
 							+ SHorizontalBox::Slot()
-							.AutoWidth()
-							//.FillWidth(1)
+							.FillWidth(1)
 								[
 									SNew(SWrapBox)
 									.UseAllottedWidth(true)
@@ -137,8 +143,109 @@ void FActorPaintingEdModeToolkit::Init(const TSharedPtr<IToolkitHost>& InitToolk
 										.VAlign(VAlign_Center)
 									]
 								]
+								#pragma endregion
+					]
+					#pragma endregion
+				]
+				+ SVerticalBox::Slot()
+				.AutoHeight()
+				.Padding(StandardPadding)
+				[
+					SNew(SSeparator)
+					.Orientation(Orient_Horizontal)
+				]
+				+ SVerticalBox::Slot()
+				.AutoHeight()
+				.Padding(StandardPadding)
+				[
+					#pragma region ColorModePanel
+					SNew(SVerticalBox)
+					+ SVerticalBox::Slot()
+					.AutoHeight()
+					.Padding(StandardPadding)
+					.HAlign(HAlign_Fill)
+					[
+						SNew(SHorizontalBox)
+						+ SHorizontalBox::Slot()
+						.Padding(StandardPadding)
+						.HAlign(HAlign_Left)
+						[
+							SNew(STextBlock)
+							.AutoWrapText(true)
+							.Text(LOCTEXT("ModeLabel", "Mode"))
+						]
+						+ SHorizontalBox::Slot()
+						.Padding(StandardPadding)
+						.HAlign(HAlign_Right)
+						[
+							SNew(STextBlock)
+							.AutoWrapText(true)
+							.Text(LOCTEXT("SholdReallyBeHereLabel", "Color  Blend Weights")) // TODO Check if is needed
 						]
 					]
+					#pragma endregion
+				]
+				+ SVerticalBox::Slot()
+				.AutoHeight()
+				.Padding(StandardPadding)
+				[
+					SNew(SSeparator)
+					.Orientation(Orient_Horizontal)
+				]
+				+ SVerticalBox::Slot()
+				.AutoHeight()
+				.Padding(StandardPadding)
+				[
+					#pragma region PaintColor
+					SNew(SVerticalBox)
+					+ SVerticalBox::Slot()
+					.AutoHeight()
+					.Padding(StandardPadding)
+					.HAlign(HAlign_Fill)
+					[
+						SNew(SHorizontalBox)
+						+ SHorizontalBox::Slot()
+						.AutoWidth()
+						.Padding(StandardPadding)
+						.HAlign(HAlign_Left)
+						[
+							SNew(SVerticalBox)
+							+ SVerticalBox::Slot()
+							.AutoHeight()
+							.Padding(StandardPadding)
+							[
+								SNew(STextBlock)
+								.AutoWrapText(true)
+								.Text(LOCTEXT("PaintLabel", "Paint Color"))
+							]
+						]
+						+ SHorizontalBox::Slot()
+						.Padding(6.0f, 0.0f, 0.0f, 0.0f)
+						.HAlign(HAlign_Fill)
+						[
+							SNew(SVerticalBox)
+							+ SVerticalBox::Slot()
+							.Padding(StandardPadding)
+							.HAlign(HAlign_Fill)
+							[
+							SNew(SHorizontalBox)
+							+ SHorizontalBox::Slot()
+							.FillWidth(1)
+							.Padding(StandardPadding)
+							[
+								SNew(SColorBlock)
+							]
+						]
+					]
+					#pragma endregion
+				]
+				+ SVerticalBox::Slot()
+				.AutoHeight()
+				.Padding(StandardPadding)
+				[
+					SNew(SSeparator)
+					.Orientation(Orient_Horizontal)
+				]
 			]
 		]
 	];
