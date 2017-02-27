@@ -13,8 +13,10 @@
 
 #define LOCTEXT_NAMESPACE "FActorPaintingEdModeToolkit"
 
+
 FActorPaintingEdModeToolkit::FActorPaintingEdModeToolkit()
 {
+	PaintColor = (FLinearColor(100, 100, 100));
 }
 
 void FActorPaintingEdModeToolkit::Init(const TSharedPtr<IToolkitHost>& InitToolkitHost)
@@ -257,6 +259,7 @@ void FActorPaintingEdModeToolkit::Init(const TSharedPtr<IToolkitHost>& InitToolk
 								SNew(SColorBlock)
 								.ShowBackgroundForAlpha(true)
 								.OnMouseButtonDown(this, &FActorPaintingEdModeToolkit::PaintColorBlock_OnMouseButtonDown)
+								.Color(this, &FActorPaintingEdModeToolkit::SetCBColor)
 							]
 						]
 					]
@@ -550,44 +553,53 @@ FReply FActorPaintingEdModeToolkit::PaintColorBlock_OnMouseButtonDown(const FGeo
 	{
 		return FReply::Unhandled();
 	}
-	/*		Color picker window use
-		FColorPickerArgs PickerArgs;
-		PickerArgs.bOnlyRefreshOnMouseUp = true;
-		PickerArgs.ParentWidget = AsShared();
-		PickerArgs.bUseAlpha = bUseAlpha;
-		PickerArgs.bOnlyRefreshOnOk = bOnlyRefreshOnOk;
-		PickerArgs.DisplayGamma = TAttribute<float>::Create( TAttribute<float>::FGetter::CreateUObject(GEngine, &UEngine::GetDisplayGamma) );
-		PickerArgs.OnColorCommitted = FOnLinearColorValueChanged::CreateSP( this, &SPropertyEditorColor::SetColor);
-		PickerArgs.OnColorPickerCancelled = FOnColorPickerCancelled::CreateSP( this, &SPropertyEditorColor::OnColorPickerCancelled );
-		PickerArgs.InitialColorOverride = InitialColor;
 
-		OpenColorPicker(PickerArgs);*/
-	FColorPickerArgs PickerArgs;
-	PickerArgs.bUseAlpha = true;
-	PickerArgs.DisplayGamma = TAttribute<float>::Create(TAttribute<float>::FGetter::CreateUObject(GEngine, &UEngine::GetDisplayGamma));
-	//PickerArgs.OnColorCommitted = InOnColorCommitted;
-	//PickerArgs.InitialColorOverride = InInitialColor;
-	PickerArgs.bOnlyRefreshOnOk = true;
-	PickerArgs.bOnlyRefreshOnMouseUp = true;
-//	PickerArgs.ParentWidget = AsShared();
-	PickerArgs.OnColorCommitted = FOnLinearColorValueChanged::CreateSP(this, &FActorPaintingEdModeToolkit::SetColor);
-	PickerArgs.OnColorPickerCancelled = FOnColorPickerCancelled::CreateSP(this, &FActorPaintingEdModeToolkit::OnColorPickerCancelled);
-	PickerArgs.InitialColorOverride = FLinearColor(0,255,0);
+	CreateColorPickerWindow();
 
-	OpenColorPicker(PickerArgs);
+	/*const UProperty* Property = PropertyEditor->GetProperty();
+	check(Property);
+
+	bool bRefreshOnlyOnOk = Property->GetOwnerClass() && Property->GetOwnerClass()->IsChildOf(UMaterialExpressionConstant3Vector::StaticClass());
+	//@todo Slate Property window: This should probably be controlled via metadata and then the actual alpha channel property hidden if its not used.
+	const bool bUseAlpha = !(Property->GetOwnerClass() && (Property->GetOwnerClass()->IsChildOf(ULightComponent::StaticClass()) || bRefreshOnlyOnOk));*/
 
 	return FReply::Handled();
 }
 
 void FActorPaintingEdModeToolkit::SetColor(FLinearColor NewColor)
 {
-	//return(FLinearColor(255, 0, 0));
+	PaintColor = NewColor;
+	UE_LOG(LogTemp, Warning, TEXT("Original Colors %s"), *PaintColor.ToString());
 }
 
 void FActorPaintingEdModeToolkit::OnColorPickerCancelled(FLinearColor OriginalColor)
 {
-	//return(FLinearColor(0, 0, 255));
+
 }
+
+void FActorPaintingEdModeToolkit::CreateColorPickerWindow()
+{
+	//TODO set the property "Value" in SHV to proper value
+	FColorPickerArgs PickerArgs;
+	PickerArgs.bUseAlpha = true;
+	PickerArgs.ParentWidget = ParentWidget;
+	PickerArgs.DisplayGamma = TAttribute<float>::Create(TAttribute<float>::FGetter::CreateUObject(GEngine, &UEngine::GetDisplayGamma));
+	PickerArgs.bOnlyRefreshOnOk = true;
+	PickerArgs.bOnlyRefreshOnMouseUp = true;
+	PickerArgs.OnColorCommitted = FOnLinearColorValueChanged::CreateSP(this, &FActorPaintingEdModeToolkit::SetColor);
+	PickerArgs.OnColorPickerCancelled = FOnColorPickerCancelled::CreateSP(this, &FActorPaintingEdModeToolkit::OnColorPickerCancelled);
+
+	PickerArgs.InitialColorOverride = FLinearColor(0,0,1,1);
+
+	OpenColorPicker(PickerArgs);
+
+}
+
+FLinearColor FActorPaintingEdModeToolkit::SetCBColor() const
+{
+	return PaintColor;
+}
+
 
 
 
