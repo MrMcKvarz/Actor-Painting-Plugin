@@ -568,10 +568,25 @@ FReply FActorPaintingEdModeToolkit::PaintColorBlock_OnMouseButtonDown(const FGeo
 	//PickerArgs.OnColorCommitted = InOnColorCommitted;
 	//PickerArgs.InitialColorOverride = InInitialColor;
 	PickerArgs.bOnlyRefreshOnOk = true;
+	PickerArgs.bOnlyRefreshOnMouseUp = true;
+//	PickerArgs.ParentWidget = AsShared();
+	PickerArgs.OnColorCommitted = FOnLinearColorValueChanged::CreateSP(this, &FActorPaintingEdModeToolkit::SetColor);
+	PickerArgs.OnColorPickerCancelled = FOnColorPickerCancelled::CreateSP(this, &FActorPaintingEdModeToolkit::OnColorPickerCancelled);
+	PickerArgs.InitialColorOverride = FLinearColor(0,255,0);
 
 	OpenColorPicker(PickerArgs);
 
 	return FReply::Handled();
+}
+
+void FActorPaintingEdModeToolkit::SetColor(FLinearColor NewColor)
+{
+	//return(FLinearColor(255, 0, 0));
+}
+
+void FActorPaintingEdModeToolkit::OnColorPickerCancelled(FLinearColor OriginalColor)
+{
+	//return(FLinearColor(0, 0, 255));
 }
 
 

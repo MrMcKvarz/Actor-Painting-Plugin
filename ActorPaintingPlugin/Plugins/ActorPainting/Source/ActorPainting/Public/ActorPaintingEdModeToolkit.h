@@ -27,5 +27,9 @@ private:
 
 	FReply PaintColorBlock_OnMouseButtonDown(const FGeometry& MyGeometry, const FPointerEvent& MouseEvent);
 
+	void SetColor(FLinearColor NewColor);
+
+	void OnColorPickerCancelled(FLinearColor OriginalColor);
+
 };
 
