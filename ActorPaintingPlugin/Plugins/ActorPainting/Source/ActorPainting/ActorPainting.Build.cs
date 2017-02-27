@@ -42,6 +42,7 @@ public class ActorPainting : ModuleRules
 				"InputCore",
 				"UnrealEd",
 				"LevelEditor",
+                "AppFramework"
 				// ... add private dependencies that you statically link with here ...	
 			}
 			);

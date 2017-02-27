@@ -4,11 +4,19 @@
 #include "ActorPaintingEdMode.h"
 #include "ActorPaintingEdModeToolkit.h"
 #include "SNumericEntryBox.h"
+#include "PackageTools.h"
+#include "ISourceControlModule.h"
+#include "SColorPicker.h"
+#include "Engine/StaticMeshActor.h"
+#include "Engine/Selection.h"
+#include "Engine/StaticMesh.h"
 
 #define LOCTEXT_NAMESPACE "FActorPaintingEdModeToolkit"
 
+
 FActorPaintingEdModeToolkit::FActorPaintingEdModeToolkit()
 {
+	PaintColor = (FLinearColor(100, 100, 100));
 }
 
 void FActorPaintingEdModeToolkit::Init(const TSharedPtr<IToolkitHost>& InitToolkitHost)
@@ -249,6 +257,9 @@ void FActorPaintingEdModeToolkit::Init(const TSharedPtr<IToolkitHost>& InitToolk
 							.Padding(StandardPadding)
 							[
 								SNew(SColorBlock)
+								.ShowBackgroundForAlpha(true)
+								.OnMouseButtonDown(this, &FActorPaintingEdModeToolkit::PaintColorBlock_OnMouseButtonDown)
+								.Color(this, &FActorPaintingEdModeToolkit::SetCBColor)
 							]
 						]
 					]
@@ -535,5 +546,61 @@ class FEdMode* FActorPaintingEdModeToolkit::GetEditorMode() const
 {
 	return GLevelEditorModeTools().GetActiveMode(FActorPaintingEdMode::EM_ActorPaintingEdModeId);
 }
+
+FReply FActorPaintingEdModeToolkit::PaintColorBlock_OnMouseButtonDown(const FGeometry & MyGeometry, const FPointerEvent & MouseEvent)
+{
+	if (MouseEvent.GetEffectingButton() != EKeys::LeftMouseButton)
+	{
+		return FReply::Unhandled();
+	}
+
+	CreateColorPickerWindow();
+
+	/*const UProperty* Property = PropertyEditor->GetProperty();
+	check(Property);
+
+	bool bRefreshOnlyOnOk = Property->GetOwnerClass() && Property->GetOwnerClass()->IsChildOf(UMaterialExpressionConstant3Vector::StaticClass());
+	//@todo Slate Property window: This should probably be controlled via metadata and then the actual alpha channel property hidden if its not used.
+	const bool bUseAlpha = !(Property->GetOwnerClass() && (Property->GetOwnerClass()->IsChildOf(ULightComponent::StaticClass()) || bRefreshOnlyOnOk));*/
+
+	return FReply::Handled();
+}
+
+void FActorPaintingEdModeToolkit::SetColor(FLinearColor NewColor)
+{
+	PaintColor = NewColor;
+	UE_LOG(LogTemp, Warning, TEXT("Original Colors %s"), *PaintColor.ToString());
+}
+
+void FActorPaintingEdModeToolkit::OnColorPickerCancelled(FLinearColor OriginalColor)
+{
+
+}
+
+void FActorPaintingEdModeToolkit::CreateColorPickerWindow()
+{
+	//TODO set the property "Value" in SHV to proper value
+	FColorPickerArgs PickerArgs;
+	PickerArgs.bUseAlpha = true;
+	PickerArgs.ParentWidget = ParentWidget;
+	PickerArgs.DisplayGamma = TAttribute<float>::Create(TAttribute<float>::FGetter::CreateUObject(GEngine, &UEngine::GetDisplayGamma));
+	PickerArgs.bOnlyRefreshOnOk = true;
+	PickerArgs.bOnlyRefreshOnMouseUp = true;
+	PickerArgs.OnColorCommitted = FOnLinearColorValueChanged::CreateSP(this, &FActorPaintingEdModeToolkit::SetColor);
+	PickerArgs.OnColorPickerCancelled = FOnColorPickerCancelled::CreateSP(this, &FActorPaintingEdModeToolkit::OnColorPickerCancelled);
+
+	PickerArgs.InitialColorOverride = FLinearColor(0,0,1,1);
+
+	OpenColorPicker(PickerArgs);
+
+}
+
+FLinearColor FActorPaintingEdModeToolkit::SetCBColor() const
+{
+	return PaintColor;
+}
+
+
+
 
 #undef LOCTEXT_NAMESPACE

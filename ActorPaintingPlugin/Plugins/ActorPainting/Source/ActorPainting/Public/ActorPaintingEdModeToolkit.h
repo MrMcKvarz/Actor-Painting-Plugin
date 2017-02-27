@@ -23,5 +23,33 @@ public:
 private:
 
 	TSharedPtr<SWidget> ToolkitWidget;
+
 	FSimpleSlot ChildSlot;
+
+	FReply PaintColorBlock_OnMouseButtonDown(const FGeometry& MyGeometry, const FPointerEvent& MouseEvent);
+
+	void SetColor(FLinearColor NewColor);
+
+	void OnColorPickerCancelled(FLinearColor OriginalColor);
+
+	void CreateColorPickerWindow();
+
+	FLinearColor SetCBColor() const;
+
+
+protected:
+	/** Original colors to set in the case that the user cancel's the color picker */
+	TArray< FLinearColor *> *OriginalColors;
+
+	TSharedPtr< class FPropertyEditor > PropertyEditor;
+
+	TSharedPtr< class IPropertyUtilities > PropertyUtilities;
+
+	FLinearColor PaintColor;
+
+	TSharedPtr<const SWidget> ParentWidget;
+
+	/** Whether or not alpha should be displayed.  Some color properties (such as lights) do not use alpha. */
+	bool bIgnoreAlpha;
 };
+
